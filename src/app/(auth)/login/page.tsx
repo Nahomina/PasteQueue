@@ -13,7 +13,12 @@ import Link from "next/link";
 import { Clipboard, Loader2, Lock, Mail, CheckCircle2 } from "lucide-react";
 
 const YEAR = new Date().getFullYear();
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? (typeof window !== "undefined" ? window.location.origin : "");
+// Always use window.location.origin at runtime — works on localhost AND production
+// NEXT_PUBLIC_SITE_URL is used only as a fallback if window is unavailable (SSR edge case)
+function getSiteUrl() {
+  if (typeof window !== "undefined") return window.location.origin;
+  return process.env.NEXT_PUBLIC_SITE_URL ?? "https://paste-queue.vercel.app";
+}
 
 function GoogleIcon() {
   return (
@@ -49,10 +54,12 @@ export default function LoginPage() {
 
   /* ── Google OAuth — fixed redirect ── */
   const handleGoogleLogin = async () => {
-    await supabase.auth.signInWithOAuth({
+    const redirectTo = `${getSiteUrl()}/auth/callback`;
+    const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
-      options: { redirectTo: `${SITE_URL}/auth/callback` },
+      options: { redirectTo, queryParams: { access_type: "offline", prompt: "consent" } },
     });
+    if (error) setError(error.message);
   };
 
   /* ── Forgot password ── */
@@ -61,7 +68,7 @@ export default function LoginPage() {
     setLoading(true);
     setError("");
     const { error } = await supabase.auth.resetPasswordForEmail(resetEmail, {
-      redirectTo: `${SITE_URL}/auth/update-password`,
+      redirectTo: `${getSiteUrl()}/auth/update-password`,
     });
     setLoading(false);
     if (error) setError(error.message);

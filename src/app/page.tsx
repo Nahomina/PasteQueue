@@ -141,18 +141,18 @@ export default function LandingPage() {
           Chrome Extension — Free Forever
         </div>
 
-        {/* Headline — Variation A */}
+        {/* Headline — Professional */}
         <h1 className="relative text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-[-0.03em] leading-[1.06] max-w-3xl mb-6 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-500 bg-clip-text text-transparent text-balance">
-          Your clipboard has amnesia.{" "}
+          The clipboard manager{" "}
           <span className="bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">
-            Fix it.
+            built for professionals.
           </span>
         </h1>
 
         <p className="relative text-lg md:text-xl text-gray-500 max-w-xl mb-10 leading-relaxed font-[450] text-balance">
-          Every Ctrl+C you&apos;ve ever lost ends here. PasteQueue queues,
-          searches, and transforms everything you copy — across every device,
-          forever. Install once. Never retype again.
+          PasteQueue captures every copy into a persistent, searchable queue —
+          with smart transforms, organized collections, and seamless cross-device
+          sync. One install. Zero friction. Complete control.
         </p>
 
         <div className="relative flex flex-col sm:flex-row gap-3 justify-center mb-16">
@@ -161,7 +161,7 @@ export default function LandingPage() {
               size="lg"
               className="gap-2 px-8 bg-indigo-600 hover:bg-indigo-700 rounded-xl shadow-lg shadow-indigo-200 hover:shadow-xl hover:shadow-indigo-300 transition-all duration-200 text-base font-semibold"
             >
-              Kill the clipboard tax
+              Get Started — It&apos;s Free
               <ArrowRight className="h-4 w-4" />
             </Button>
           </Link>
@@ -298,18 +298,18 @@ export default function LandingPage() {
         </div>
         <div className="relative max-w-2xl mx-auto">
           <h2 className="text-4xl font-extrabold tracking-[-0.02em] mb-4 text-balance">
-            Stop losing what you copy.
+            Ready to work smarter?
           </h2>
           <p className="text-indigo-200 max-w-md mx-auto mb-10 font-[450] text-lg">
-            Join developers and knowledge workers who never retype from memory.
-            Free to start — no credit card, no catch.
+            Join thousands of professionals who have upgraded their clipboard
+            workflow. Free to get started — no credit card required.
           </p>
           <Link href="/signup">
             <Button
               size="lg"
               className="px-10 gap-2 bg-white text-indigo-700 hover:bg-indigo-50 rounded-xl shadow-xl text-base font-semibold hover:shadow-2xl transition-all duration-200"
             >
-              Get PasteQueue free
+              Create Free Account
               <ArrowRight className="h-4 w-4" />
             </Button>
           </Link>
