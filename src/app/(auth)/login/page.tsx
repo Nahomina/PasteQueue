@@ -10,9 +10,10 @@ import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
-import { Clipboard, Loader2, Lock, Mail } from "lucide-react";
+import { Clipboard, Loader2, Lock, Mail, CheckCircle2 } from "lucide-react";
 
 const YEAR = new Date().getFullYear();
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? (typeof window !== "undefined" ? window.location.origin : "");
 
 function GoogleIcon() {
   return (
@@ -25,13 +26,18 @@ function GoogleIcon() {
   );
 }
 
+type View = "login" | "forgot" | "forgot-sent";
+
 export default function LoginPage() {
-  const [email, setEmail]       = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError]       = useState("");
-  const [loading, setLoading]   = useState(false);
+  const [view, setView]           = useState<View>("login");
+  const [email, setEmail]         = useState("");
+  const [password, setPassword]   = useState("");
+  const [resetEmail, setResetEmail] = useState("");
+  const [error, setError]         = useState("");
+  const [loading, setLoading]     = useState(false);
   const supabase = createClient();
 
+  /* ── Sign in ── */
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -41,13 +47,114 @@ export default function LoginPage() {
     else window.location.href = "/dashboard";
   };
 
+  /* ── Google OAuth — fixed redirect ── */
   const handleGoogleLogin = async () => {
     await supabase.auth.signInWithOAuth({
       provider: "google",
-      options: { redirectTo: `${window.location.origin}/auth/callback` },
+      options: { redirectTo: `${SITE_URL}/auth/callback` },
     });
   };
 
+  /* ── Forgot password ── */
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+    const { error } = await supabase.auth.resetPasswordForEmail(resetEmail, {
+      redirectTo: `${SITE_URL}/auth/update-password`,
+    });
+    setLoading(false);
+    if (error) setError(error.message);
+    else setView("forgot-sent");
+  };
+
+  /* ── Forgot-sent confirmation ── */
+  if (view === "forgot-sent") {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background px-4">
+        <div className="w-full max-w-sm text-center space-y-5">
+          <div className="flex justify-center">
+            <div className="rounded-full bg-green-100 p-4">
+              <CheckCircle2 className="h-10 w-10 text-green-600" />
+            </div>
+          </div>
+          <div>
+            <h2 className="text-xl font-bold">Check your inbox</h2>
+            <p className="mt-2 text-sm text-muted-foreground">
+              We sent a password reset link to{" "}
+              <span className="font-medium text-foreground">{resetEmail}</span>.
+            </p>
+          </div>
+          <Button variant="outline" onClick={() => { setView("login"); setResetEmail(""); }}>
+            Back to Sign In
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  /* ── Forgot password form ── */
+  if (view === "forgot") {
+    return (
+      <div className="min-h-screen grid lg:grid-cols-2">
+        <div className="hidden lg:flex flex-col justify-between bg-indigo-600 p-10 text-white">
+          <Link href="/" className="flex items-center gap-2 font-bold text-xl">
+            <Clipboard className="h-6 w-6" />
+            PasteQueue
+          </Link>
+          <blockquote className="text-2xl font-semibold leading-snug">
+            "The clipboard upgrade you didn&apos;t know was missing."
+          </blockquote>
+          <p className="text-indigo-300 text-xs">© {YEAR} PasteQueue. All rights reserved.</p>
+        </div>
+
+        <div className="flex flex-col items-center justify-center px-6 py-12 bg-background">
+          <div className="w-full max-w-sm space-y-8">
+            <div>
+              <h1 className="text-2xl font-bold tracking-tight">Reset your password</h1>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Enter your email and we&apos;ll send a reset link.
+              </p>
+            </div>
+
+            <form onSubmit={handleForgotPassword} className="space-y-4">
+              <div className="relative">
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+                <Input
+                  type="email"
+                  placeholder="Email address"
+                  value={resetEmail}
+                  onChange={(e) => setResetEmail(e.target.value)}
+                  className="pl-9"
+                  required
+                  autoComplete="email"
+                />
+              </div>
+
+              {error && (
+                <div className="rounded-md bg-destructive/10 border border-destructive/20 px-3 py-2">
+                  <p className="text-sm text-destructive">{error}</p>
+                </div>
+              )}
+
+              <Button type="submit" className="w-full bg-indigo-600 hover:bg-indigo-700" disabled={loading}>
+                {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                Send Reset Link
+              </Button>
+            </form>
+
+            <p className="text-center text-sm text-muted-foreground">
+              <button onClick={() => { setView("login"); setError(""); }} className="font-medium text-indigo-600 hover:text-indigo-700 underline-offset-4 hover:underline">
+                ← Back to Sign In
+              </button>
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  /* ── Main login form ── */
   return (
     <div className="min-h-screen grid lg:grid-cols-2">
       {/* Left — brand panel */}
@@ -58,19 +165,16 @@ export default function LoginPage() {
         </Link>
         <div className="space-y-4">
           <blockquote className="text-2xl font-semibold leading-snug">
-            "The clipboard that finally keeps up with how I work."
+            &ldquo;The clipboard that finally keeps up with how I work.&rdquo;
           </blockquote>
           <p className="text-indigo-200 text-sm">— Developer at a fast-growing startup</p>
         </div>
-        <p className="text-indigo-300 text-xs">
-          © {YEAR} PasteQueue. All rights reserved.
-        </p>
+        <p className="text-indigo-300 text-xs">© {YEAR} PasteQueue. All rights reserved.</p>
       </div>
 
       {/* Right — form */}
       <div className="flex flex-col items-center justify-center px-6 py-12 bg-background">
         <div className="w-full max-w-sm space-y-8">
-          {/* Mobile logo */}
           <div className="lg:hidden text-center">
             <Link href="/" className="inline-flex items-center gap-2 text-2xl font-bold">
               <Clipboard className="h-7 w-7 text-indigo-500" />
@@ -96,17 +200,28 @@ export default function LoginPage() {
                 autoComplete="email"
               />
             </div>
-            <div className="relative">
-              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
-              <Input
-                type="password"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="pl-9"
-                required
-                autoComplete="current-password"
-              />
+            <div className="space-y-1">
+              <div className="relative">
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+                <Input
+                  type="password"
+                  placeholder="Password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="pl-9"
+                  required
+                  autoComplete="current-password"
+                />
+              </div>
+              <div className="flex justify-end">
+                <button
+                  type="button"
+                  onClick={() => { setView("forgot"); setError(""); setResetEmail(email); }}
+                  className="text-xs text-muted-foreground hover:text-indigo-600 underline-offset-4 hover:underline transition-colors"
+                >
+                  Forgot password?
+                </button>
+              </div>
             </div>
 
             {error && (
@@ -143,7 +258,10 @@ export default function LoginPage() {
           </p>
 
           <p className="text-center text-xs text-muted-foreground/60">
-            © {YEAR} PasteQueue · <Link href="/privacy" className="hover:underline">Privacy</Link> · <Link href="/terms" className="hover:underline">Terms</Link>
+            © {YEAR} PasteQueue ·{" "}
+            <Link href="/privacy" className="hover:underline">Privacy</Link>
+            {" · "}
+            <Link href="/terms" className="hover:underline">Terms</Link>
           </p>
         </div>
       </div>
