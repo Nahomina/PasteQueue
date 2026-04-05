@@ -10,10 +10,10 @@ import {
   Wand2,
   FolderOpen,
   RefreshCw,
-  Globe,
   Pin,
   ArrowRight,
   Zap,
+  ChevronDown,
 } from "lucide-react";
 
 const YEAR = new Date().getFullYear();
@@ -68,7 +68,7 @@ const features = [
     icon: Pin,
     title: "Keep your best snippets always on top",
     description:
-      "Pin your boilerplate, your address, your API keys. They never scroll away. The things you use daily are always one click away.",
+      "Pin your boilerplate, your address, your templates. They never scroll away. The things you use daily are always one click away.",
     color: "text-rose-600",
     bg: "bg-rose-50",
     border: "group-hover:border-rose-200",
@@ -79,7 +79,7 @@ const steps = [
   {
     step: "1",
     title: "Sign up free",
-    description: "Create your account with email in under 30 seconds. No credit card.",
+    description: "Create your account with email or Google in under 30 seconds. No credit card.",
   },
   {
     step: "2",
@@ -98,6 +98,65 @@ const stats = [
   { value: "<1s", label: "Search speed" },
   { value: "0", label: "Config required" },
   { value: "100%", label: "Privacy-first" },
+];
+
+const faqs = [
+  {
+    q: "What exactly is PasteQueue?",
+    a: "PasteQueue is a clipboard manager that lives in your browser. Every time you copy something — a URL, a code snippet, a paragraph, an image — PasteQueue quietly saves it to a persistent, searchable queue. You can access it from any device, search through your entire history, apply one-click transforms, and organise items into collections. Think of it as an upgrade to the single-item clipboard your OS gives you.",
+  },
+  {
+    q: "How does PasteQueue capture clipboard data?",
+    a: "PasteQueue uses a Chrome extension with the clipboardRead permission. When you press Ctrl+C (or Cmd+C on Mac) on any webpage, the extension intercepts the copy event, reads the selected content, and securely sends it to your personal queue via our API. The extension only activates on copy events — it never reads your clipboard in the background or without you actively copying something.",
+  },
+  {
+    q: "Is my clipboard data private and secure?",
+    a: "Yes. All data is stored in a database with Row-Level Security — meaning the database itself enforces that you can only ever read your own items, even if our application code had a bug. Data is encrypted in transit (HTTPS) and at rest. We do not sell, share, or analyse your clipboard content. You can delete individual items or your entire history at any time.",
+  },
+  {
+    q: "Will PasteQueue capture my passwords or sensitive data?",
+    a: "PasteQueue captures everything you copy — so yes, if you copy a password, it will appear in your queue. We strongly recommend pinning a reminder to clear sensitive items after use, or using the built-in delete function immediately. A future Pro feature will let you set up keyword-based auto-exclusion rules (e.g. anything matching a password manager pattern is never saved).",
+  },
+  {
+    q: "What's free and what will cost money?",
+    a: "PasteQueue is free to get started with a generous free tier that includes your full clipboard history, search, transforms, and cross-device sync. As we grow, we'll introduce a Pro plan for power users and teams — with features like higher storage limits, advanced transforms, team-shared collections, priority support, and integrations. Early users who sign up now will receive a discounted rate when Pro launches.",
+  },
+  {
+    q: "When will Pro launch, and how much will it cost?",
+    a: "We're aiming to launch Pro within the next few months. Pricing will be competitive — expect something in the range of $5–9/month for individuals and team plans for larger groups. Everyone who signs up during our early access phase will be grandfathered into a lower rate. We'll email you before any paid features go live, with plenty of notice.",
+  },
+  {
+    q: "Does cross-device sync work in real time?",
+    a: "Yes. Copy something on your work laptop, open PasteQueue on your phone, and it's already there — usually within a second. Sync is powered by Supabase Realtime over WebSockets, so there's no polling or manual refresh needed.",
+  },
+  {
+    q: "Which browsers are supported?",
+    a: "The Chrome extension (Manifest V3) works on Chrome, Brave, Edge, Arc, and any other Chromium-based browser. The web dashboard works in every modern browser — Safari, Firefox, Chrome — so you can always view and manage your queue even without the extension installed.",
+  },
+  {
+    q: "Does PasteQueue work offline?",
+    a: "The web dashboard requires an internet connection to sync and search. However, a future version of the extension will cache your most recent items locally so you can access them even without a connection, syncing changes when you're back online.",
+  },
+  {
+    q: "How is PasteQueue different from my OS clipboard history (Windows + V or macOS clipboard)?",
+    a: "Your OS clipboard history is local-only, limited in size, wiped on restart, and has no search or organisation. PasteQueue is persistent across restarts and devices, unlimited in size, fully searchable, supports transforms (strip formatting, extract URLs, prettify JSON), and lets you organise items into collections. It also works across every device you own — your phone, tablet, and multiple computers.",
+  },
+  {
+    q: "What are Transforms?",
+    a: "Transforms are one-click operations that modify your copied content. Current transforms include: Strip formatting (HTML → plain text), Extract all URLs from a block of text, Prettify JSON, Convert to Markdown, Trim & clean whitespace, and UPPERCASE / lowercase. Select any item in your queue, click the transform icon, and the result replaces or is added as a new item. More transforms are coming based on user requests.",
+  },
+  {
+    q: "Can I export my clipboard history?",
+    a: "Yes. You can export individual collections as a Markdown or plain-text file with one click. Bulk export of your entire history is coming soon. Your data always belongs to you — we'll never hold it hostage.",
+  },
+  {
+    q: "What happens to my data if I delete my account?",
+    a: "All your clipboard items, collections, and account data are permanently deleted from our database within 30 days of account deletion, as per our Terms of Service. We do not keep backups of deleted user data beyond that window.",
+  },
+  {
+    q: "Can I use PasteQueue on mobile?",
+    a: "The web dashboard is fully mobile-responsive, so you can browse, search, and re-copy items from your phone's browser. A native mobile app (iOS & Android) is on our roadmap — it will allow you to copy on your phone and have it instantly appear on your desktop queue.",
+  },
 ];
 
 export default function LandingPage() {
@@ -138,10 +197,10 @@ export default function LandingPage() {
         {/* Badge */}
         <div className="relative inline-flex items-center gap-1.5 bg-indigo-50 border border-indigo-100 text-indigo-700 text-xs font-semibold px-3 py-1.5 rounded-full mb-8 tracking-wide shadow-sm">
           <Zap className="h-3 w-3 fill-indigo-500 text-indigo-500" />
-          Chrome Extension — Free Forever
+          Chrome Extension — Free to Get Started
         </div>
 
-        {/* Headline — Professional */}
+        {/* Headline */}
         <h1 className="relative text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-[-0.03em] leading-[1.06] max-w-3xl mb-6 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-500 bg-clip-text text-transparent text-balance">
           The clipboard manager{" "}
           <span className="bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">
@@ -161,7 +220,7 @@ export default function LandingPage() {
               size="lg"
               className="gap-2 px-8 bg-indigo-600 hover:bg-indigo-700 rounded-xl shadow-lg shadow-indigo-200 hover:shadow-xl hover:shadow-indigo-300 transition-all duration-200 text-base font-semibold"
             >
-              Get Started — It&apos;s Free
+              Get Started Free
               <ArrowRight className="h-4 w-4" />
             </Button>
           </Link>
@@ -275,7 +334,6 @@ export default function LandingPage() {
           <div className="grid gap-10 md:grid-cols-3">
             {steps.map((step, i) => (
               <div key={step.step} className="relative text-center">
-                {/* Connector line */}
                 {i < steps.length - 1 && (
                   <div className="hidden md:block absolute top-6 left-[60%] w-[80%] h-px bg-gradient-to-r from-indigo-200 to-transparent" />
                 )}
@@ -285,6 +343,117 @@ export default function LandingPage() {
                 <h3 className="font-semibold text-gray-900 mb-2 tracking-tight">{step.title}</h3>
                 <p className="text-sm text-gray-500 font-[450] leading-relaxed">{step.description}</p>
               </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Pricing teaser ──────────────────── */}
+      <section className="py-20 px-5 bg-gray-50/60">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-12">
+            <p className="text-xs font-semibold text-indigo-600 uppercase tracking-widest mb-3">Pricing</p>
+            <h2 className="text-4xl font-extrabold tracking-[-0.02em] text-gray-900 mb-4">
+              Start free. Scale when you&apos;re ready.
+            </h2>
+            <p className="text-gray-500 max-w-lg mx-auto font-[450]">
+              No credit card required to get started. Early users lock in the best rate when Pro launches.
+            </p>
+          </div>
+          <div className="grid gap-6 md:grid-cols-2 max-w-2xl mx-auto">
+            {/* Free tier */}
+            <div className="rounded-2xl border border-gray-200 bg-white p-8">
+              <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-2">Free</p>
+              <div className="text-4xl font-extrabold text-gray-900 mb-1">$0</div>
+              <p className="text-sm text-gray-500 mb-6">Forever, no card needed</p>
+              <ul className="space-y-3 text-sm text-gray-600 mb-8">
+                {[
+                  "Unlimited clipboard history",
+                  "Full-text search",
+                  "All transforms",
+                  "Collections & pinning",
+                  "Cross-device sync",
+                  "Chrome extension",
+                ].map((f) => (
+                  <li key={f} className="flex items-center gap-2">
+                    <span className="h-1.5 w-1.5 rounded-full bg-indigo-400 shrink-0" />
+                    {f}
+                  </li>
+                ))}
+              </ul>
+              <Link href="/signup" className="block">
+                <Button className="w-full bg-indigo-600 hover:bg-indigo-700 rounded-xl">
+                  Get Started Free
+                </Button>
+              </Link>
+            </div>
+
+            {/* Pro tier */}
+            <div className="rounded-2xl border-2 border-indigo-500 bg-indigo-600 p-8 text-white relative overflow-hidden">
+              <div className="pointer-events-none absolute -top-10 -right-10 h-40 w-40 rounded-full bg-violet-500/30 blur-2xl" />
+              <div className="relative">
+                <div className="flex items-center gap-2 mb-2">
+                  <p className="text-xs font-semibold text-indigo-200 uppercase tracking-widest">Pro</p>
+                  <span className="text-[10px] font-bold bg-amber-400 text-amber-900 px-2 py-0.5 rounded-full tracking-wide">Coming soon</span>
+                </div>
+                <div className="text-4xl font-extrabold mb-1">~$7<span className="text-xl font-semibold text-indigo-300">/mo</span></div>
+                <p className="text-sm text-indigo-200 mb-6">Early-access pricing locked in for you</p>
+                <ul className="space-y-3 text-sm text-indigo-100 mb-8">
+                  {[
+                    "Everything in Free",
+                    "Priority support",
+                    "Advanced transforms",
+                    "Team-shared collections",
+                    "Auto-exclude sensitive patterns",
+                    "Integrations (Notion, Slack, more)",
+                  ].map((f) => (
+                    <li key={f} className="flex items-center gap-2">
+                      <span className="h-1.5 w-1.5 rounded-full bg-indigo-300 shrink-0" />
+                      {f}
+                    </li>
+                  ))}
+                </ul>
+                <Link href="/signup" className="block">
+                  <Button className="w-full bg-white text-indigo-700 hover:bg-indigo-50 rounded-xl font-semibold">
+                    Join Early Access
+                  </Button>
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── FAQ ─────────────────────────────── */}
+      <section className="py-28 px-5 bg-white">
+        <div className="max-w-3xl mx-auto">
+          <div className="text-center mb-16">
+            <p className="text-xs font-semibold text-indigo-600 uppercase tracking-widest mb-3">FAQ</p>
+            <h2 className="text-4xl font-extrabold tracking-[-0.02em] text-gray-900 mb-4">
+              Everything you want to know
+            </h2>
+            <p className="text-gray-500 font-[450]">
+              Can&apos;t find an answer?{" "}
+              <a href="mailto:support@pastequeue.app" className="text-indigo-600 hover:underline underline-offset-4">
+                Email us
+              </a>{" "}
+              and we&apos;ll reply within 24 hours.
+            </p>
+          </div>
+
+          <div className="divide-y divide-gray-100">
+            {faqs.map((faq, i) => (
+              <details key={i} className="group py-5 cursor-pointer list-none [&::-webkit-details-marker]:hidden">
+                <summary className="flex items-start justify-between gap-4 text-left select-none">
+                  <span className="font-semibold text-gray-900 text-[15px] leading-snug group-open:text-indigo-600 transition-colors">
+                    {faq.q}
+                  </span>
+                  <ChevronDown className="h-5 w-5 text-gray-400 shrink-0 mt-0.5 transition-transform duration-200 group-open:rotate-180" />
+                </summary>
+                <p className="mt-3 text-sm text-gray-500 leading-relaxed font-[450]">
+                  {faq.a}
+                </p>
+              </details>
             ))}
           </div>
         </div>
@@ -301,8 +470,7 @@ export default function LandingPage() {
             Ready to work smarter?
           </h2>
           <p className="text-indigo-200 max-w-md mx-auto mb-10 font-[450] text-lg">
-            Join thousands of professionals who have upgraded their clipboard
-            workflow. Free to get started — no credit card required.
+            Join professionals who have upgraded their clipboard workflow. Free to start — early users lock in the best Pro rate.
           </p>
           <Link href="/signup">
             <Button
